@@ -33,8 +33,10 @@ def taco(body):
         command = (command.replace(TACO_NAME, '')).strip()
         command = (command.replace('@', '')).strip()
         print("stripped command: {}".format(command))
-        #test_process_bot_input_command(room_id,command, TACO_HEADERS, TACO_NAME)
+        process_bot_input_command(room_id,command, TACO_HEADERS, TACO_NAME)
         #send_log_to_ss(TACO_NAME,str(datetime.now()),identity,command,room_id)
+
+
 
 def get_msg_sent_to_bot(msg_id, headers):
     urltext = URL + "/" + msg_id
@@ -44,3 +46,17 @@ def get_msg_sent_to_bot(msg_id, headers):
     response = json.loads(response.text)
     #print ("Message to bot : {}".format(response["text"]))
     return response["text"]
+
+
+
+def bot_post_to_room(room_id, message, headers):
+    #try to post
+    payload = {"roomId": room_id,"markdown": message}
+    response = requests.request("POST", URL, data=json.dumps(payload), headers=headers)
+    #error handling
+    if response.status_code != 200:
+        #modify function to receive user_input as well so we can pass through
+        #user_input = "some test message for the moment"
+        #send to the DEVs bot room
+        #error_handling(response,response.status_code,user_input,room_id,headers)
+        print("error posting to room")
