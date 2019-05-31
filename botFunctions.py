@@ -21,7 +21,7 @@ def bot_send_gif(room_id, gif):
     """
     m = MultipartEncoder({'roomId': room_id,
                       'text': 'Taco Time!',
-                      'files': , gif})
+                      'files': gif})
     r = requests.post('https://api.ciscospark.com/v1/messages', data=m,
                     headers={'Authorization': os.environ['TACO_TOKEN'],
                     'Content-Type': m.content_type})
