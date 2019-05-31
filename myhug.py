@@ -33,7 +33,8 @@ def taco(body):
         command = (command.replace(TACO_NAME, '')).strip()
         command = (command.replace('@', '')).strip()
         print("stripped command: {}".format(command))
-        process_bot_input_command(room_id,command, TACO_HEADERS, TACO_NAME)
+        bot_post_to_room(room_id,"I don't know how to respond yet.  All values hard-coded at the moment.",TACO_HEADERS)
+        #process_bot_input_command(room_id,command, TACO_HEADERS, TACO_NAME)
         #send_log_to_ss(TACO_NAME,str(datetime.now()),identity,command,room_id)
 
 
