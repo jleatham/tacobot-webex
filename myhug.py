@@ -29,10 +29,18 @@ def taco(body):
     print("see POST from {}".format(identity))
     if identity != TACO_EMAIL:
         print("{}-----{}".format(identity,TACO_EMAIL))
-        command = get_msg_sent_to_bot(text).lower()
         command = get_msg_sent_to_bot(text, TACO_HEADERS)
         command = (command.replace(TACO_NAME, '')).strip()
         command = (command.replace('@', '')).strip()
         print("stripped command: {}".format(command))
         #test_process_bot_input_command(room_id,command, TACO_HEADERS, TACO_NAME)
         #send_log_to_ss(TACO_NAME,str(datetime.now()),identity,command,room_id)
+
+def get_msg_sent_to_bot(msg_id, headers):
+    urltext = URL + "/" + msg_id
+    payload = ""
+
+    response = requests.request("GET", urltext, data=payload, headers=headers)
+    response = json.loads(response.text)
+    #print ("Message to bot : {}".format(response["text"]))
+    return response["text"]
