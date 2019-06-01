@@ -16,7 +16,7 @@ PROCESSED_EMAIL_LIST_AUSTIN = TEST_EMAIL_LIST_AUSTIN.split(' ')
 def bot_send_gif(room_id, gif):
     #try to post
     payload = {"roomId": room_id,
-               "markdown": message,
+               "markdown": "Taco Time!",
                "files":[gif]}
     response = requests.request("POST", URL, data=json.dumps(payload), headers=headers)
     #error handling
