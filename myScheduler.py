@@ -18,11 +18,17 @@ TACO_GIF_LIST = ['https://media.giphy.com/media/WNs0uptipSG40/giphy.gif',
             'https://media.giphy.com/media/3o7ZezGPktFNZj93os/giphy.gif',
             'https://media.giphy.com/media/3o6ZtkmiFtpBvii6uQ/giphy.gif']
 
+TACO_MESSAGE = ['Taco Time!',
+                'All meetings are better with Tacos',
+                "♫ Frozen ♫  -- ♫ Do you want to bring a Taco? ♫ ... ♫ It doesn't have to be a Taco ♫ ",
+                'You cannot make everybody happy, you are not a Taco.',
+                'Surround yourself with Tacos, not negativity.',
+                'Everybody loves Tacos']
 
-def bot_send_gif(room_id, gif):
+def bot_send_gif(room_id, gif, message):
     #try to post
     payload = {"roomId": room_id,
-               "markdown": "Taco Time!",
+               "markdown": message,
                "files":[gif]}
     response = requests.request("POST", 'https://api.ciscospark.com/v1/messages', data=json.dumps(payload), headers=TACO_HEADERS)
     #error handling
@@ -34,11 +40,13 @@ def bot_send_gif(room_id, gif):
         print("error posting to room")
 
 
-if datetime.now().weekday() == 4:
+#heroku schedule to run every day at 8AM CST.  Only run this script on Thursday.
+if datetime.now().weekday() == 4: #0=Monday , 4=Friday, etc
     random_dallas = random.choice(PROCESSED_EMAIL_LIST_DALLAS)
     random_austin = random.choice(PROCESSED_EMAIL_LIST_AUSTIN)
     random_taco_gif = random.choice(TACO_GIF_LIST)
+    random_taco_messsage = random.choice(TACO_MESSAGE)
 
 
-    bot_post_to_room(TEST_ROOM_ID,f"<@personEmail:jleatham@cisco.com|{random_dallas}> and <@personEmail:jleatham@cisco.com|{random_austin}>:  You're on deck",TACO_HEADERS)
-    bot_send_gif(TEST_ROOM_ID,random_taco_gif)
+    bot_post_to_room(TEST_ROOM_ID,f"<@personEmail:jleatham@cisco.com|{random_dallas}> and <@personEmail:jleatham@cisco.com|{random_austin}>:  You're on deck to bring Tacos!",TACO_HEADERS)
+    bot_send_gif(TEST_ROOM_ID,random_taco_gif, random_taco_messsage)
