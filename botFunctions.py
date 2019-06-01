@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import requests
+from myhug import TACO_HEADERS
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 
@@ -19,7 +20,7 @@ def bot_send_gif(room_id, gif):
     payload = {"roomId": room_id,
                "markdown": "Taco Time!",
                "files":[gif]}
-    response = requests.request("POST", 'https://api.ciscospark.com/v1/messages', data=json.dumps(payload), headers=headers)
+    response = requests.request("POST", 'https://api.ciscospark.com/v1/messages', data=json.dumps(payload), headers=TACO_HEADERS)
     #error handling
     if response.status_code != 200:
         #modify function to receive user_input as well so we can pass through
