@@ -4,7 +4,7 @@ import requests
 import json
 import re
 from datetime import datetime
-from botFunctions import TACO_EMAIL,TACO_NAME,TACO_SMARTSHEET_ID
+from botFunctions import TACO_EMAIL,TACO_NAME,TACO_SMARTSHEET_ID, DAY_TO_RUN, NTX_TACO_SELECTOR
 
 
 URL = "https://api.ciscospark.com/v1/messages"
@@ -33,8 +33,7 @@ def taco(body):
         command = (command.replace(TACO_NAME, '')).strip()
         command = (command.replace('@', '')).strip()
         print("stripped command: {}".format(command))
-        bot_post_to_room(room_id,"I don't know how to respond yet.  All values hard-coded at the moment.",TACO_HEADERS)
-        #process_bot_input_command(room_id,command, TACO_HEADERS, TACO_NAME)
+        process_bot_input_command(room_id,command, TACO_HEADERS, TACO_NAME)
         #send_log_to_ss(TACO_NAME,str(datetime.now()),identity,command,room_id)
 
 
@@ -47,6 +46,35 @@ def get_msg_sent_to_bot(msg_id, headers):
     response = json.loads(response.text)
     #print ("Message to bot : {}".format(response["text"]))
     return response["text"]
+
+
+
+def process_bot_input_command(room_id,command, headers, bot_name):
+    """ 
+        Give generic response for now if spoken to.
+        Add a test command to run what it would look like
+    """
+    possible_command_list = ['test','Test','TEST']
+    command_list = command.split(' ')
+    event_trigger = list(set(command_list).intersection(possible_command_list))
+    if event_trigger:
+        '''
+        #remove command trigger and keep what is left
+        for i in event_trigger:
+            command = command.replace(i,'').strip()
+        '''
+        msg_list = []
+        
+        msg_list.append("Set to run every {} where 0 = Mon , 4 = Friday, etc \n".format(DAY_TO_RUN))
+        msg_list.append("Names are chosen at random and currently are hardcoded to the NTX region, split by city\n")
+        msg_list.append("Will be posted into hardcoded room id: NTX general\n")
+        msg_list.append("**Example output of TacoBot : ** \n\n")
+        msg = ''.join(msg_list)
+        response = bot_post_to_room(room_id, msg, headers)
+        NTX_TACO_SELECTOR(room_id)
+    else:
+        bot_post_to_room(room_id,"Only command I know is <TEST>.  All values hard-coded at the moment and messages sent on schedule.",TACO_HEADERS)
+
 
 
 
