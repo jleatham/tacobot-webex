@@ -95,15 +95,15 @@ def process_bot_input_command(room_id,command, headers, bot_name):
         '''
         msg_list = []
         
-        msg_list.append("Set to run every {} where 0 = Mon , 4 = Friday, etc \n".format(DAY_TO_RUN))
-        msg_list.append("Names are chosen at random and currently are hardcoded to the NTX region, split by city\n")
-        msg_list.append("Will be posted into hardcoded room id: NTX general\n")
-        msg_list.append("**Example output of TacoBot : ** \n\n")
+        msg_list.append("Set to run every {} where 0 = Mon , 4 = Friday, etc \n\n".format(DAY_TO_RUN))
+        msg_list.append("Names are chosen at random and currently are hardcoded to the NTX region, split by city \n\n")
+        msg_list.append("Will be posted into hardcoded room id: NTX general \n\n")
+        msg_list.append("**Example output of TacoBot :** \n\n\n\n")
         msg = ''.join(msg_list)
         response = bot_post_to_room(room_id, msg, headers)
         NTX_TACO_SELECTOR(room_id)
     else:
-        bot_post_to_room(room_id,"Only command I know is <TEST>.  All values hard-coded at the moment and messages sent on schedule.",TACO_HEADERS)
+        bot_post_to_room(room_id,"Only command I know is: **TEST** .  All values hard-coded at the moment and messages sent on schedule.",TACO_HEADERS)
 
 
 
