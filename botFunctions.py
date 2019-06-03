@@ -26,15 +26,19 @@ TACO_HEADERS = {
 
 
 TACO_MESSAGE = [
-                 ['https://media.giphy.com/media/WNs0uptipSG40/giphy.gif',      'Everybody gets a TACO!'],
+                 ['https://media.giphy.com/media/WNs0uptipSG40/giphy.gif',      'Everybody gets a Taco!'],
                  ['https://media.giphy.com/media/pYCdxGyLFSwgw/giphy.gif',      "It's raining Tacos!"],
                  ['https://media.giphy.com/media/EHCNlAWDPcOME/giphy.gif',      'Taco Time!'],
-                 ['https://media.giphy.com/media/26tnlYdWMzIYdaocU/giphy.gif',  'You cannot make everybody happy, you are not a Taco.'],
+                 ['https://i.gifer.com/2KJm.gif',  'Is it Taco day already?'],
                  ['https://media.giphy.com/media/kGK4VeSwqEfbW/giphy.gif',      'All meetings are better with Tacos'],
                  ['https://media.giphy.com/media/pxXV5nDJhHthm/giphy.gif',      "♫ Do you want to bring a Taco? ♫ ... ♫ It doesn't have to be a Taco ♫ "],
                  ['https://media.giphy.com/media/3o7ZeT4XKYLG6x8zqo/giphy.gif', 'Surround yourself with Tacos, not negativity.'],
                  ['https://media.giphy.com/media/3o7ZezGPktFNZj93os/giphy.gif', 'It is only Tacos all the way down'],
-                 ['https://media.giphy.com/media/3o6ZtkmiFtpBvii6uQ/giphy.gif', 'Everybody loves Tacos']
+                 ['https://i.gifer.com/3Vv.gif', 'Everybody loves Tacos'],
+                 ['https://i.gifer.com/310p.gif',"It's a great day for Tacos"],
+                 ['https://i.gifer.com/4QNn.gif','You cannot make everybody happy, you are not a Taco.'],
+                 ['https://i.gifer.com/MZ8.gif','Sergeant TacoBot, at your service'],
+                 ['https://i.gifer.com/3W3.gif','¿Como se dice Taco en español?']
                 ]
 
 def bot_send_gif(room_id, gif, message):
