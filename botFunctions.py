@@ -3,6 +3,7 @@ import sys
 import random
 import requests
 import json
+import urllib
 
 
 TACO_EMAIL = os.environ['TACO_EMAIL']
@@ -59,9 +60,12 @@ def NTX_TACO_SELECTOR(room_id):
     random_dallas = random.choice(PROCESSED_EMAIL_LIST_DALLAS)
     random_austin = random.choice(PROCESSED_EMAIL_LIST_AUSTIN)
     random_taco_messsage = random.choice(TACO_MESSAGE)
+    response = urllib.request.urlopen(random_taco_messsage[0])
+    html = response.read()
 
     bot_post_to_room(room_id,f"<@personEmail:{random_dallas}@cisco.com|{random_dallas}> and <@personEmail:{random_austin}@cisco.com|{random_austin}>:  You're on deck to bring Tacos!",TACO_HEADERS)
-    bot_send_gif(room_id,random_taco_messsage[0], random_taco_messsage[1])
+    #bot_send_gif(room_id,random_taco_messsage[0], random_taco_messsage[1])
+    bot_send_gif(room_id,html, random_taco_messsage[1])
 
 
 
