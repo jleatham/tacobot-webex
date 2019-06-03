@@ -3,7 +3,7 @@ import sys
 import random
 import requests
 import json
-
+import urllib.request
 
 
 TACO_EMAIL = os.environ['TACO_EMAIL']
@@ -46,7 +46,8 @@ def bot_send_gif(room_id, gif, message):
     #try to post
     payload = {"roomId": room_id,
                "markdown": message,
-               "files":[gif]}
+               "files":(gif, open(gif, 'rb'),
+                      'image/gif')}
     response = requests.request("POST", 'https://api.ciscospark.com/v1/messages', data=json.dumps(payload), headers=TACO_HEADERS)
     #error handling
     if response.status_code != 200:
@@ -60,9 +61,11 @@ def NTX_TACO_SELECTOR(room_id):
     random_dallas = random.choice(PROCESSED_EMAIL_LIST_DALLAS)
     random_austin = random.choice(PROCESSED_EMAIL_LIST_AUSTIN)
     random_taco_messsage = random.choice(TACO_MESSAGE)
+    urllib.request.urlretrieve(random_taco_messsage[0], 'taco.gif')
 
     bot_post_to_room(room_id,f"<@personEmail:{random_dallas}@cisco.com|{random_dallas}> and <@personEmail:{random_austin}@cisco.com|{random_austin}>:  You're on deck to bring Tacos!",TACO_HEADERS)
-    bot_send_gif(room_id,random_taco_messsage[0], random_taco_messsage[1])
+    #bot_send_gif(room_id,random_taco_messsage[0], random_taco_messsage[1])
+    bot_send_gif(room_id,'taco.gif', random_taco_messsage[1])
 
 
 
