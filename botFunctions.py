@@ -50,6 +50,7 @@ def bot_send_gif(room_id, gif, message):
                "files":[gif]}
     response = requests.request("POST", 'https://api.ciscospark.com/v1/messages', data=json.dumps(payload), headers=TACO_HEADERS)
     #error handling
+    print(f"sending gif to {room_id}")
     if response.status_code != 200:
         #modify function to receive user_input as well so we can pass through
         #user_input = "some test message for the moment"
