@@ -16,17 +16,17 @@ def taco(body):
     """
         Test bot for new features.
     """
-    print("GOT {}: {}".format(type(body), repr(body)))
+    #print("GOT {}: {}".format(type(body), repr(body)))
     room_id = body["data"]["roomId"]
     identity = body["data"]["personEmail"]
     text = body["data"]["id"]
-    print("see POST from {}".format(identity))
+    #print("see POST from {}".format(identity))
     if identity != TACO_EMAIL:
-        print("{}-----{}".format(identity,TACO_EMAIL))
+        #print("{}-----{}".format(identity,TACO_EMAIL))
         command = get_msg_sent_to_bot(text, TACO_HEADERS)
         command = (command.replace(TACO_NAME, '')).strip()
         command = (command.replace('@', '')).strip()
-        print("stripped command: {}".format(command))
+        #print("stripped command: {}".format(command))
         process_bot_input_command(room_id,command, TACO_HEADERS, TACO_NAME)
         #send_log_to_ss(TACO_NAME,str(datetime.now()),identity,command,room_id)
 
