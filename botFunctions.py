@@ -78,7 +78,7 @@ def NTX_TACO_SELECTOR(room_id):
     urllib.request.urlretrieve(random_taco_messsage[0], 'taco.gif')
 
     bot_send_gif_v2(room_id,'taco.gif', random_taco_messsage[1])
-    bot_post_to_room(room_id,f"<@personEmail:{random_dallas}@cisco.com|{random_dallas}> and <@personEmail:{random_austin}@cisco.com|{random_austin}>:  You're on deck to bring Tacos!",TACO_HEADERS)
+    bot_post_to_room(room_id,f"<@personEmail:{random_dallas}@cisco.com|{random_dallas}> and <@personEmail:{random_austin}@cisco.com|{random_austin}>:  You're on deck to bring Tacos tomorrow!",TACO_HEADERS)
 
 
 
