@@ -36,7 +36,7 @@ TACO_MESSAGE = [
                  ['https://media.giphy.com/media/pxXV5nDJhHthm/giphy.gif',      "♫ Do you want to bring a Taco? ♫ ... ♫ It doesn't have to be a Taco ♫ "],
                  ['https://media.giphy.com/media/3o7ZeT4XKYLG6x8zqo/giphy.gif', 'Surround yourself with Tacos, not negativity.'],
                  ['https://media.giphy.com/media/3o7ZezGPktFNZj93os/giphy.gif', 'It is only Tacos all the way down'],
-                 ['https://i.gifer.com/3Vv.gif', 'Everybody loves Tacos'],
+                 ['https://media.giphy.com/media/3o6ZsUk2bRRhmROuw8/giphy.gif', 'Everybody loves Tacos'],
                  ['https://i.gifer.com/310p.gif',"It's a great day for Tacos"],
                  ['https://i.gifer.com/4QNn.gif','You cannot make everybody happy, you are not a Taco.'],
                  ['https://i.gifer.com/MZ8.gif','Sergeant TacoBot, at your service'],
@@ -77,9 +77,8 @@ def NTX_TACO_SELECTOR(room_id):
     random_taco_messsage = random.choice(TACO_MESSAGE)
     urllib.request.urlretrieve(random_taco_messsage[0], 'taco.gif')
 
-    bot_post_to_room(room_id,f"<@personEmail:{random_dallas}@cisco.com|{random_dallas}> and <@personEmail:{random_austin}@cisco.com|{random_austin}>:  You're on deck to bring Tacos!",TACO_HEADERS)
-    #bot_send_gif(room_id,random_taco_messsage[0], random_taco_messsage[1])
     bot_send_gif_v2(room_id,'taco.gif', random_taco_messsage[1])
+    bot_post_to_room(room_id,f"<@personEmail:{random_dallas}@cisco.com|{random_dallas}> and <@personEmail:{random_austin}@cisco.com|{random_austin}>:  You're on deck to bring Tacos!",TACO_HEADERS)
 
 
 
