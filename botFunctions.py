@@ -171,7 +171,7 @@ def process_bot_input_command(room_id,command, headers, bot_name):
         if "pause" in result:
             print(f"made it to pause:  {result['pause']}") 
             msg = (
-                f"No need to bring TACOS this week \n\n""
+                f"No need to bring TACOS this week \n\n"
                 f"You have sadened the TACOBOT \n\n"
                 #post sad tacobot gif/pic
             )
@@ -194,7 +194,7 @@ def process_bot_input_command(room_id,command, headers, bot_name):
         elif "test" in result:
             print(f"made it to test:  {result['test']}") 
             msg = (
-                f"Set to run every {DAY_TO_RUN} where 0 = Mon , 4 = Friday, etc \n\n""
+                f"Set to run every {DAY_TO_RUN} where 0 = Mon , 4 = Friday, etc \n\n"
                 f"Names are chosen at random and currently are hardcoded to the NTX region, split by city \n\n"
                 f"Will be posted into hardcoded room id: NTX general \n\n"
                 f"**Example output of TacoBot :** \n\n\n\n"
