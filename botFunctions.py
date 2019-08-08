@@ -5,6 +5,7 @@ import requests
 import json
 import urllib.request
 from requests_toolbelt.multipart.encoder import MultipartEncoder
+import re
 
 
 TACO_EMAIL = os.environ['TACO_EMAIL']
