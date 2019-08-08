@@ -195,6 +195,7 @@ def process_bot_input_command(room_id,command, headers, bot_name):
         elif "test" in result:
             print(f"made it to test:  {result['test']}") 
             msg = (
+                f"Room ID = {room_id} \n"
                 f"Set to run every {DAY_TO_RUN} where 0 = Mon , 4 = Friday, etc \n\n"
                 f"Names are chosen at random and currently are hardcoded to the NTX region, split by city \n\n"
                 f"Will be posted into hardcoded room id: NTX general \n\n"
@@ -202,13 +203,7 @@ def process_bot_input_command(room_id,command, headers, bot_name):
             )
             response = bot_post_to_room(room_id, msg, headers)
             NTX_TACO_SELECTOR(room_id)            
-            '''
-            msg_list.append("Set to run every {} where 0 = Mon , 4 = Friday, etc \n\n".format(DAY_TO_RUN))
-            msg_list.append("Names are chosen at random and currently are hardcoded to the NTX region, split by city \n\n")
-            msg_list.append("Will be posted into hardcoded room id: NTX general \n\n")
-            msg_list.append("**Example output of TacoBot :** \n\n\n\n")
-            msg = ''.join(msg_list)
-            '''
+
         #data = get_all_data_and_filter(ss_client,EVENT_SMARTSHEET_ID, state_filter,arch_filter,url_filter,NO_COLUMN_FILTER)
         #communicate_to_user(ss_client,room_id,headers,bot_name,data,state_filter,arch_filter,mobile_filter,url_filter,help=False)
     else:
