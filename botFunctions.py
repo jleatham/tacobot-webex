@@ -158,7 +158,7 @@ def taco_selector():
 
     for row in member_pick_list:
         if str(datetime.now().weekday()) == row["weekday_to_run"]: #0=Monday , 4=Friday, etc
-            if int(datetime.now().hour) == int(row["time_to_run"]):
+            if int(datetime.now().hour) == int(float(row["time_to_run"])):
                 
                 day_of_month = datetime.now().day
                 if (((day_of_month <= 7 ) and (row["run_period"] == "First of Month")) or
