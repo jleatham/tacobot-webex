@@ -124,7 +124,7 @@ def taco_selector():
         all_room_ids_list.append(row["roomID"])
         if row["pause"]:
             if datetime.now() > datetime.strptime(row["pause"], '%Y-%m-%d'):
-                to_modify.append({"ss_row_id":row["ss_row_id"],"flag":"pause"})
+                to_modify.append({"ss_row_id":row["ss_row_id"],"flag":"unpause"})
     all_room_ids_list = list(set(all_room_ids_list))
 
     for room in all_room_ids_list:
@@ -151,7 +151,7 @@ def taco_selector():
                     row_dict["time_to_run"] = row["time_to_run"]
                     row_dict["roomID"] = row["roomID"]
                 if row["name"] and not row["pause"]:
-                    row_dict["members"].append([row["name"],row["email"]])
+                    row_dict["members"].append([row["name"],row["email"],row["select_count"]])
         member_pick_list.append(row_dict)
     
 
@@ -174,7 +174,9 @@ def taco_selector():
                     urllib.request.urlretrieve(random_taco_messsage[0], 'taco.gif')
                     bot_send_gif_v2(row["roomID"],'taco.gif', random_taco_messsage[1])
                     bot_post_to_room(row["roomID"],f"<@personEmail:{the_taco_giver[1]}|{the_taco_giver[0]}> :  You're on deck to bring Tacos to the next meeting!",TACO_HEADERS)
-
+                    to_modify.append({"ss_row_id":row["ss_row_id"],"flag":"count","count":int(float(the_taco_giver[2]))+1})
+    for row in to_modify:
+        modify_smart_sheet(row)
 
 def map_cell_data_to_columnId(columns,cell):
     """
@@ -188,7 +190,34 @@ def map_cell_data_to_columnId(columns,cell):
         if column.id == cell.column_id:
             return column.title
 
+def modify_smart_sheet(row):
+    '''
+        roomID : 3362571592984452
+        name: 7866171220354948
+        email: 2236671686141828
+        birth_month: 6893064775067524
+        birth_day: 1263565240854404
+        pause: 6740271313512324
+        select_count: 4488471499827076
 
+    '''
+    headers = {'Authorization': "Bearer "+SMARTSHEET_TOKEN,'Content-Type': "application/json"}
+    if row["flag"] == "unpause": 
+        url = f"https://api.smartsheet.com/2.0/sheets/{SMARTSHEET_ID}/rows/{row['ss_row_id']}"    
+        payload = ( f'{{"id":{row["ss_row_id"]}, "cells": [ '
+                    f'{{"columnId": 6740271313512324,  "value": "",    "strict": false}}'
+                    f'] }}')     
+        response = requests.request("POST", url, data=payload, headers=headers)
+        responseJson = json.loads(response.text)
+        print(str(responseJson))
+    if row["flag"] == "count":
+        url = f"https://api.smartsheet.com/2.0/sheets/{SMARTSHEET_ID}/rows/{row['ss_row_id']}"    
+        payload = ( f'{{"id":{row["ss_row_id"]}, "cells": [ '
+                    f'{{"columnId": 4488471499827076,  "value": "{row["count"]}",    "strict": false}}'
+                    f'] }}')     
+        response = requests.request("POST", url, data=payload, headers=headers)
+        responseJson = json.loads(response.text)
+        print(str(responseJson))
 
 def get_msg_sent_to_bot(msg_id, headers):
     urltext = URL + "/" + msg_id
