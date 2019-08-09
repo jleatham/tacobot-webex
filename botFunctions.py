@@ -6,6 +6,8 @@ import json
 import urllib.request
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 import re
+import smartsheet
+from datetime import datetime
 
 
 TACO_EMAIL = os.environ['TACO_EMAIL']
@@ -19,6 +21,10 @@ TEST_EMAIL_LIST_AUSTIN = os.environ['TEST_EMAIL_LIST_AUSTIN']
 PROCESSED_EMAIL_LIST_DALLAS = TEST_EMAIL_LIST_DALLAS.split(' ')
 PROCESSED_EMAIL_LIST_AUSTIN = TEST_EMAIL_LIST_AUSTIN.split(' ')
 
+SMARTSHEET_ID = os.environ['SMARTSHEET_ID']   #tacobot sheet
+SMARTSHEET_TOKEN = os.environ['SMARTSHEET_TOKEN']
+
+
 URL = "https://api.ciscospark.com/v1/messages"
 
 TACO_HEADERS = {
@@ -27,6 +33,13 @@ TACO_HEADERS = {
     'cache-control': "no-cache"
 }
 
+
+def ss_get_client(SMARTSHEET_TOKEN):
+    #ss_client = smartsheet.Smartsheet(os.environ['SMARTSHEET_TOKEN'])
+    ss_client = smartsheet.Smartsheet(SMARTSHEET_TOKEN)
+    # Make sure we don't miss any errors
+    ss_client.errors_as_exceptions(True)
+    return ss_client
 
 TACO_MESSAGE = [
                  ['https://media.giphy.com/media/WNs0uptipSG40/giphy.gif',      'Everybody gets a Taco!'],
@@ -80,6 +93,100 @@ def NTX_TACO_SELECTOR(room_id):
 
     bot_send_gif_v2(room_id,'taco.gif', random_taco_messsage[1])
     bot_post_to_room(room_id,f"<@personEmail:{random_dallas}@cisco.com|{random_dallas}> and <@personEmail:{random_austin}@cisco.com|{random_austin}>:  You're on deck to bring Tacos tomorrow!",TACO_HEADERS)
+
+def taco_selector():
+    '''
+        Get all people and their associated roomIDs and emails.  Will be a list of dicts for each row.  
+        Create a new list where we combine all the individual rows that have the same room_id into a new dict : {'room_id': 'asdf','members':[['John','john@comp.com'],['Jane','jane@comp.com'],'[etc]'],'post_date':'etc'... }
+    '''
+    ss_client = ss_get_client(SMARTSHEET_TOKEN)
+    sheet = ss_client.Sheets.get_sheet(SMARTSHEET_ID)
+    all_data_list = []
+    all_room_ids_list = []
+    member_pick_list = []
+    to_modify = []
+    for row in sheet.rows:
+        row_dict = {}
+        row_dict["ss_row_id"] = str(row.id)
+        #row_dict["url"] = ""        
+        for cell in row.cells:
+            #map the column id to the column name
+            #map the cell data to the column or '' if null
+            column_title = map_cell_data_to_columnId(sheet.columns, cell)
+            if cell.value:
+                row_dict[column_title] = str(cell.value)
+            else:
+                row_dict[column_title] = ''    
+       
+        all_data_list.append(row_dict)
+    
+    for row in all_data_list:
+        all_room_ids_list.append(row["roomID"])
+        if row["pause"]:
+            if datetime.now() > datetime.strptime(row["pause"], '%Y-%m-%d'):
+                to_modify.append({"ss_row_id":row["ss_row_id"],"flag":"pause"})
+    all_room_ids_list = list(set(all_room_ids_list))
+
+    for room in all_room_ids_list:
+        row_dict = {"members":[]}
+        for row in all_data_list:
+            if room == row["roomID"]:
+                if row["name"] == "default_create":
+                    if row["weekday_to_run"] == "Monday":
+                        row_dict["weekday_to_run"] = "0"
+                    elif row["weekday_to_run"] == "Tuesday":
+                        row_dict["weekday_to_run"] = "1"   
+                    elif row["weekday_to_run"] == "Wednesday":
+                        row_dict["weekday_to_run"] = "2"    
+                    elif row["weekday_to_run"] == "Thursday":
+                        row_dict["weekday_to_run"] = "3"    
+                    elif row["weekday_to_run"] == "Friday":
+                        row_dict["weekday_to_run"] = "4"    
+                    elif row["weekday_to_run"] == "Saturday":
+                        row_dict["weekday_to_run"] = "5"    
+                    elif row["weekday_to_run"] == "Sunday":
+                        row_dict["weekday_to_run"] = "6"  
+
+                    row_dict["run_period"] = row["run_period"]
+                    row_dict["time_to_run"] = row["time_to_run"]
+                    row_dict["roomID"] = row["roomID"]
+                if row["name"] and not row["pause"]:
+                    row_dict["members"].append([row["name"],row["email"]])
+        member_pick_list.append(row_dict)
+    
+
+
+    for row in member_pick_list:
+        if str(datetime.now().weekday()) == row["weekday_to_run"]: #0=Monday , 4=Friday, etc
+            if int(datetime.now().hour) == int(row["time_to_run"]):
+                
+                day_of_month = datetime.now().day
+                if (((day_of_month <= 7 ) and (row["run_period"] == "First of Month")) or
+                    ((8 <= day_of_month <= 14) and (row["run_period"] == "Second of Month")) or
+                    ((15 <= day_of_month <= 21) and (row["run_period"] == "Third of Month")) or
+                    ((22 <= day_of_month <= 28) and (row["run_period"] == "Fourth of Month")) or
+                    ((day_of_month <= 29) and (row["run_period"] == "Fifth of Month")) or
+                    (row["run_period"] == "Every Week")):
+
+                    print("Made it past if statement")
+                    the_taco_giver = random.choice(row["members"])
+                    random_taco_messsage = random.choice(TACO_MESSAGE)
+                    urllib.request.urlretrieve(random_taco_messsage[0], 'taco.gif')
+                    bot_send_gif_v2(row["roomID"],'taco.gif', random_taco_messsage[1])
+                    bot_post_to_room(row["roomID"],f"<@personEmail:{the_taco_giver[1]}|{the_taco_giver[0]}> :  You're on deck to bring Tacos to the next meeting!",TACO_HEADERS)
+
+
+def map_cell_data_to_columnId(columns,cell):
+    """
+        helper function to map smartsheet column IDs to their name value without hardcoding
+        pass in the parsed objects from smartsheet(the entire set of columns and the individual cell)
+        then iterate until the ids match and return the associated column name
+    """
+    
+    #cell object has listing for column_id , but data shows {columnId: n}, weird
+    for column in columns:
+        if column.id == cell.column_id:
+            return column.title
 
 
 
@@ -202,7 +309,8 @@ def process_bot_input_command(room_id,command, headers, bot_name):
                 f"**Example output of TacoBot :** \n\n\n\n"
             )
             response = bot_post_to_room(room_id, msg, headers)
-            NTX_TACO_SELECTOR(room_id)            
+            #NTX_TACO_SELECTOR(room_id)     
+            taco_selector()       
 
         #data = get_all_data_and_filter(ss_client,EVENT_SMARTSHEET_ID, state_filter,arch_filter,url_filter,NO_COLUMN_FILTER)
         #communicate_to_user(ss_client,room_id,headers,bot_name,data,state_filter,arch_filter,mobile_filter,url_filter,help=False)
