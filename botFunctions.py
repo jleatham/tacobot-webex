@@ -150,8 +150,8 @@ def taco_selector():
                     row_dict["run_period"] = row["run_period"]
                     row_dict["time_to_run"] = row["time_to_run"]
                     row_dict["roomID"] = row["roomID"]
-                if row["name"] and not row["pause"]:
-                    row_dict["members"].append([row["name"],row["email"],row["select_count"]])
+                elif row["name"] and not row["pause"]:
+                    row_dict["members"].append([row["name"],row["email"],row["select_count"],row["ss_row_id"]])
         member_pick_list.append(row_dict)
     
 
@@ -174,7 +174,7 @@ def taco_selector():
                     urllib.request.urlretrieve(random_taco_messsage[0], 'taco.gif')
                     bot_send_gif_v2(row["roomID"],'taco.gif', random_taco_messsage[1])
                     bot_post_to_room(row["roomID"],f"<@personEmail:{the_taco_giver[1]}|{the_taco_giver[0]}> :  You're on deck to bring Tacos to the next meeting!",TACO_HEADERS)
-                    to_modify.append({"ss_row_id":row["ss_row_id"],"flag":"count","count":int(float(the_taco_giver[2]))+1})
+                    to_modify.append({"ss_row_id":the_taco_giver[3],"flag":"count","count":int(float(the_taco_giver[2]))+1})
     for row in to_modify:
         modify_smart_sheet(row)
 
