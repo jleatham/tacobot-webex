@@ -174,6 +174,9 @@ def taco_selector():
                     urllib.request.urlretrieve(random_taco_messsage[0], 'taco.gif')
                     bot_send_gif_v2(row["roomID"],'taco.gif', random_taco_messsage[1])
                     bot_post_to_room(row["roomID"],f"<@personEmail:{the_taco_giver[1]}|{the_taco_giver[0]}> :  You're on deck to bring Tacos to the next meeting!",TACO_HEADERS)
+                    print(f'{the_taco_giver[2]}')
+                    print(f'{float(the_taco_giver[2])}')
+                    print(f'{int(float(the_taco_giver[2]))+1}')
                     to_modify.append({"ss_row_id":the_taco_giver[3],"flag":"count","count":int(float(the_taco_giver[2]))+1})
     for row in to_modify:
         modify_smart_sheet(row)
@@ -228,43 +231,6 @@ def get_msg_sent_to_bot(msg_id, headers):
     #print ("Message to bot : {}".format(response["text"]))
     return response["text"]
 
-
-
-def old_process_bot_input_command(room_id,command, headers, bot_name):
-    """ 
-        Give generic response for now if spoken to.
-        Add a test command to run what it would look like
-    """
-    test_command_list = ['test']
-    pause_command_list = ['stop','pause']
-    possible_command_list = test_command_list + pause_command_list
-    command_list = command.split(' ')
-    event_trigger = list(set(command_list).intersection(possible_command_list))
-    if event_trigger:
-        '''
-        #remove command trigger and keep what is left
-        for i in event_trigger:
-            command = command.replace(i,'').strip()
-        '''
-        if any(item in test_command_list for item in event_trigger):
-            msg_list = []
-            
-            msg_list.append("Set to run every {} where 0 = Mon , 4 = Friday, etc \n\n".format(DAY_TO_RUN))
-            msg_list.append("Names are chosen at random and currently are hardcoded to the NTX region, split by city \n\n")
-            msg_list.append("Will be posted into hardcoded room id: NTX general \n\n")
-            msg_list.append("**Example output of TacoBot :** \n\n\n\n")
-            msg = ''.join(msg_list)
-            response = bot_post_to_room(room_id, msg, headers)
-            NTX_TACO_SELECTOR(room_id)
-        elif any(item in pause_command_list  for item in event_trigger):
-            msg_list = []
-            
-            msg_list.append("**No need to bring TACOs this week** \n\n")
-            msg_list.append("You have angered the tacobot \n\n")
-            msg = ''.join(msg_list)
-            response = bot_post_to_room(room_id, msg, headers)            
-    else:
-        bot_post_to_room(room_id,"Only commands I know are: **TEST** , and **pause** .  All values hard-coded at the moment and messages sent on schedule.",TACO_HEADERS)
 
 
 
