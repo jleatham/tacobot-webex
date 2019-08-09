@@ -176,8 +176,6 @@ def taco_selector():
                     bot_send_gif_v2(row["roomID"],'taco.gif', random_taco_messsage[1])
                     bot_post_to_room(row["roomID"],f"<@personEmail:{the_taco_giver[1]}|{the_taco_giver[0]}> :  You're on deck to bring Tacos to the next meeting!",TACO_HEADERS)
                     print(f'{the_taco_giver[2]}')
-                    print(f'{float(the_taco_giver[2])}')
-                    print(f'{int(float(the_taco_giver[2]))+1}')
                     try:
                         count = str(int(float(the_taco_giver[2]))+1)
                     except:
