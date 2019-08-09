@@ -213,7 +213,7 @@ def modify_smart_sheet(row):
         payload = ( f'{{"id":{row["ss_row_id"]}, "cells": [ '
                     f'{{"columnId": 6740271313512324,  "value": "",    "strict": false}}'
                     f'] }}')     
-        response = requests.request("POST", url, data=payload, headers=headers)
+        response = requests.request("PUT", url, data=payload, headers=headers)
         responseJson = json.loads(response.text)
         print(str(responseJson))
     if row["flag"] == "count":
@@ -221,7 +221,7 @@ def modify_smart_sheet(row):
         payload = ( f'{{"id":{row["ss_row_id"]}, "cells": [ '
                     f'{{"columnId": 4488471499827076,  "value": "{row["count"]}",    "strict": false}}'
                     f'] }}')     
-        response = requests.request("POST", url, data=payload, headers=headers)
+        response = requests.request("PUT", url, data=payload, headers=headers)
         responseJson = json.loads(response.text)
         print(str(responseJson))
 
