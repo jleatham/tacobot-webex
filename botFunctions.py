@@ -178,7 +178,11 @@ def taco_selector():
                     print(f'{the_taco_giver[2]}')
                     print(f'{float(the_taco_giver[2])}')
                     print(f'{int(float(the_taco_giver[2]))+1}')
-                    to_modify.append({"ss_row_id":the_taco_giver[3],"flag":"count","count":int(float(the_taco_giver[2]))+1})
+                    try:
+                        count = str(int(float(the_taco_giver[2]))+1)
+                    except:
+                        count = "1"
+                    to_modify.append({"ss_row_id":the_taco_giver[3],"flag":"count","count":count})
     for row in to_modify:
         modify_smart_sheet(row)
 
