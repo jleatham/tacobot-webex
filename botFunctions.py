@@ -218,12 +218,22 @@ def modify_smart_sheet(row):
         print(str(responseJson))
     if row["flag"] == "count":
         url = f"https://api.smartsheet.com/2.0/sheets/{SMARTSHEET_ID}/rows/{row['ss_row_id']}"    
+        print(f"{url}")
         payload = ( f'{{"id":{row["ss_row_id"]}, "cells": [ '
                     f'{{"columnId": 4488471499827076,  "value": "{row["count"]}",    "strict": false}}'
+                    f'] }}')     
+        response = requests.put(url, data=payload, headers=headers)
+        #responseJson = json.loads(response.text)
+        print(response.content)
+    if row["flag"] == "pause":
+        url = f"https://api.smartsheet.com/2.0/sheets/{SMARTSHEET_ID}/rows/{row['ss_row_id']}"    
+        payload = ( f'{{"id":{row["ss_row_id"]}, "cells": [ '
+                    f'{{"columnId": 6740271313512324,  "value": "{row["pause"]}",    "strict": false}}'
                     f'] }}')     
         response = requests.request("PUT", url, data=payload, headers=headers)
         responseJson = json.loads(response.text)
         print(str(responseJson))
+
 
 def get_msg_sent_to_bot(msg_id, headers):
     urltext = URL + "/" + msg_id
