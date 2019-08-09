@@ -157,6 +157,7 @@ def taco_selector():
 
 
     for row in member_pick_list:
+        print(f"{row}")
         if str(datetime.now().weekday()) == row["weekday_to_run"]: #0=Monday , 4=Friday, etc
             if int(datetime.now().hour) == int(float(row["time_to_run"])):
                 
