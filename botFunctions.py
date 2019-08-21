@@ -184,7 +184,8 @@ def taco_selector():
                     the_taco_giver = random.choice(row["members"])
                     random_taco_messsage = random.choice(TACO_MESSAGE)
                     urllib.request.urlretrieve(random_taco_messsage[0], 'taco.gif')
-                    bot_send_gif_v2(row["roomID"],'taco.gif', random_taco_messsage[1])
+                    response = bot_send_gif_v2(row["roomID"],'taco.gif', random_taco_messsage[1])
+                    print(response)
                     bot_post_to_room(row["roomID"],f"<@personEmail:{the_taco_giver[1]}|{the_taco_giver[0]}> :  You're on deck to bring Tacos to the next meeting!",TACO_HEADERS)
                     print(f'{the_taco_giver[2]}')
                     try:
