@@ -306,7 +306,7 @@ def process_bot_input_command(room_id,command, headers, bot_name):
         elif "naughty" in result:
             print(f"made it to naughty:  {result['naughty']}") 
             msg = (
-                f"Shame!\n"
+                f"Shame! \n"
                 f"You have angered the TACOBOT \n\n"
                 #post angry tacobot gif/pic
             )
