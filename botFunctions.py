@@ -57,6 +57,17 @@ TACO_MESSAGE = [
                  ['https://i.gifer.com/3W3.gif','¿Como se dice Taco en español?']
                 ]
 
+RANDOM_RESPONSES = [ "Please don't encourage the TACOBOT",
+                  "Every now and then I fall apart",
+                  "Dinosaurs had no TACOs, how did that work out?",
+                  "Do you want to TACO bout it?",
+                  "Taco Love language 1 of 5: Words of Affirmation: Your Tacos are delicious!",
+                  "Taco Love language 2 of 5: Acts of Service: I made you Tacos!",
+                  "Taco Love language 3 of 5: Receiving Gifts: Here's a Taco!",
+                  "Taco Love language 4 of 5: Quality Time: Let's go out for Tacos together!"
+                  #"Taco Love language 5 of 5: Physical Touch: Let me hold you like a taco!"
+            ]
+
 def bot_send_gif(room_id, gif, message):
     #try to post
     payload = {"roomId": room_id,
@@ -213,9 +224,8 @@ def modify_smart_sheet(row):
         payload = ( f'{{"id":{row["ss_row_id"]}, "cells": [ '
                     f'{{"columnId": 6740271313512324,  "value": "",    "strict": false}}'
                     f'] }}')     
-        response = requests.request("PUT", url, data=payload, headers=headers)
-        responseJson = json.loads(response.text)
-        print(str(responseJson))
+        response = requests.put(url, data=payload, headers=headers)
+        #print(response.content)
     if row["flag"] == "count":
         url = f"https://api.smartsheet.com/2.0/sheets/{SMARTSHEET_ID}/rows/{row['ss_row_id']}"    
         print(f"{url}")
@@ -223,16 +233,14 @@ def modify_smart_sheet(row):
                     f'{{"columnId": 4488471499827076,  "value": "{row["count"]}",    "strict": false}}'
                     f'] }}')     
         response = requests.put(url, data=payload, headers=headers)
-        #responseJson = json.loads(response.text)
-        print(response.content)
+        #print(response.content)
     if row["flag"] == "pause":
         url = f"https://api.smartsheet.com/2.0/sheets/{SMARTSHEET_ID}/rows/{row['ss_row_id']}"    
         payload = ( f'{{"id":{row["ss_row_id"]}, "cells": [ '
                     f'{{"columnId": 6740271313512324,  "value": "{row["pause"]}",    "strict": false}}'
                     f'] }}')     
-        response = requests.request("PUT", url, data=payload, headers=headers)
-        responseJson = json.loads(response.text)
-        print(str(responseJson))
+        response = requests.put(url, data=payload, headers=headers)
+        #print(response.content)
 
 
 def get_msg_sent_to_bot(msg_id, headers):
@@ -272,10 +280,10 @@ def process_bot_input_command(room_id,command, headers, bot_name):
     '''
 
     command_list = [
-        ("test",['test','-t']),
+        ("test",['-t']),
         ("pause",['pause','-p']),
         ("spin",['spin','respin','redo','-s']),
-        ("naughty",['naughty','bad','-n']),
+        ("naughty",['naughty','bad','-n','angry','forgot','lazy','trouble','slack']),
         ("add",['add','-a']),
         ("remove",['remove','-r']),
         ("list",['list','-l'])
@@ -287,7 +295,7 @@ def process_bot_input_command(room_id,command, headers, bot_name):
         if "pause" in result:
             print(f"made it to pause:  {result['pause']}") 
             msg = (
-                f"No need to bring TACOS this week \n\n"
+                f"No need to bring TACOS this week \n"
                 f"You have sadened the TACOBOT \n\n"
                 #post sad tacobot gif/pic
             )
@@ -297,7 +305,12 @@ def process_bot_input_command(room_id,command, headers, bot_name):
          
         elif "naughty" in result:
             print(f"made it to naughty:  {result['naughty']}") 
-
+            msg = (
+                f"Shame!\n"
+                f"You have angered the TACOBOT \n\n"
+                #post angry tacobot gif/pic
+            )
+            response = bot_post_to_room(room_id, msg, headers)
         elif "add" in result:
             print(f"made it to add:  {result['add']}") 
 
@@ -323,7 +336,7 @@ def process_bot_input_command(room_id,command, headers, bot_name):
         #data = get_all_data_and_filter(ss_client,EVENT_SMARTSHEET_ID, state_filter,arch_filter,url_filter,NO_COLUMN_FILTER)
         #communicate_to_user(ss_client,room_id,headers,bot_name,data,state_filter,arch_filter,mobile_filter,url_filter,help=False)
     else:
-        bot_post_to_room(room_id,"Only commands I know are: **TEST** , and **pause** .  All values hard-coded at the moment and messages sent on schedule.",TACO_HEADERS)
+        bot_post_to_room(room_id,random.choice(RANDOM_RESPONSES),TACO_HEADERS)
         #communicate_to_user(ss_client,room_id,headers,bot_name,data,state_filter,arch_filter,mobile_filter,url_filter,help=True)      
 
 
