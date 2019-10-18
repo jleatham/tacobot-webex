@@ -110,27 +110,16 @@ def taco_selector():
         Get all people and their associated roomIDs and emails.  Will be a list of dicts for each row.  
         Create a new list where we combine all the individual rows that have the same room_id into a new dict : {'room_id': 'asdf','members':[['John','john@comp.com'],['Jane','jane@comp.com'],'[etc]'],'post_date':'etc'... }
     '''
-    ss_client = ss_get_client(SMARTSHEET_TOKEN)
-    sheet = ss_client.Sheets.get_sheet(SMARTSHEET_ID)
-    all_data_list = []
     all_room_ids_list = []
     member_pick_list = []
     to_modify = []
-    for row in sheet.rows:
-        row_dict = {}
-        row_dict["ss_row_id"] = str(row.id)
-        #row_dict["url"] = ""        
-        for cell in row.cells:
-            #map the column id to the column name
-            #map the cell data to the column or '' if null
-            column_title = map_cell_data_to_columnId(sheet.columns, cell)
-            if cell.value:
-                row_dict[column_title] = str(cell.value)
-            else:
-                row_dict[column_title] = ''    
-       
-        all_data_list.append(row_dict)
+
+    #get all Smart Sheet Data
+       #dict of rows with the column as key    
+    all_data_list = get_ss_data()
     
+    #unpause any member if current date is greater than 'pause' date (add to-modify list)
+    #get all roomIDs while looping then remove duplicates
     for row in all_data_list:
         all_room_ids_list.append(row["roomID"])
         if row["pause"]:
@@ -138,6 +127,11 @@ def taco_selector():
                 to_modify.append({"ss_row_id":row["ss_row_id"],"flag":"unpause"})
     all_room_ids_list = list(set(all_room_ids_list))
 
+    #For each roomID
+        #if default_create: get the runday/time
+        #else add members to members field of dict
+
+        #append to member_pick_list
     for room in all_room_ids_list:
         row_dict = {"members":[]}
         for row in all_data_list:
@@ -166,7 +160,14 @@ def taco_selector():
         member_pick_list.append(row_dict)
     
 
+    #For each room, check if it is the correct day to run
+    #then check if it is the correct hour to run
+    #then check if the week of the month is correct
 
+    #if yes to above, randomly select member in room
+        #post to room
+        #add selected member to to_modify list
+    
     for row in member_pick_list:
         print(f"{row}")
         if str(datetime.now().weekday()) == row["weekday_to_run"]: #0=Monday , 4=Friday, etc
@@ -181,7 +182,7 @@ def taco_selector():
                     (row["run_period"] == "Every Week")):
 
                     print("Made it past if statement")
-                    the_taco_giver = random.choice(row["members"])
+                    the_taco_giver = weighted_random_select(row["members"])
                     random_taco_messsage = random.choice(TACO_MESSAGE)
                     urllib.request.urlretrieve(random_taco_messsage[0], 'taco.gif')
                     response = bot_send_gif_v2(row["roomID"],'taco.gif', random_taco_messsage[1])
@@ -193,14 +194,68 @@ def taco_selector():
                     except:
                         count = "1"
                     to_modify.append({"ss_row_id":the_taco_giver[3],"flag":"count","count":count})
+    
+    
+    #modify smartsheet all at once
     for row in to_modify:
         modify_smart_sheet(row)
+
+def get_ss_data():
+    ss_client = ss_get_client(SMARTSHEET_TOKEN)
+    sheet = ss_client.Sheets.get_sheet(SMARTSHEET_ID)
+    all_data_list = []
+    for row in sheet.rows:
+        row_dict = {}
+        row_dict["ss_row_id"] = str(row.id)
+        #row_dict["url"] = ""        
+        for cell in row.cells:
+            #map the column id to the column name
+            #map the cell data to the column or '' if null
+            column_title = map_cell_data_to_columnId(sheet.columns, cell)
+            if cell.value:
+                row_dict[column_title] = str(cell.value)
+            else:
+                row_dict[column_title] = ''    
+       
+        all_data_list.append(row_dict)
+    return all_data_list
+
+def weighted_random_select(ptp_list):
+    #ptp = Potential Taco Providers
+    '''
+        list of list is provided: [['name','email','1.0','123423423'],[...]]
+        representing name,email,times selected,smartsheet row ID
+        Goal is to identify the members(s) who have provided the least amount of tacos...
+        And select them before anyone else.  If multiple have given the same, select randomly
+        End result is a randomized round robin
+    '''
+    weight = []
+    tacos_given = []
+    for i in ptp_list:
+        tacos_given.append(int(float(i[2])))
+    limit = sorted(list(set(tacos_given)))[0]  #get unique numbers, sort them, only grab the first/lowest, these people need 
+    #to be selected next
+    for i in ptp_list:
+        l = int(float(i[2]))
+        if l == limit:
+            w = 1
+            weight.append(w)
+        else:
+            weight.append(0)
+            
+    c = random.choices(
+        population=ptp_list,
+        weights=weight,
+        k=1
+    )    
+    return c
 
 def map_cell_data_to_columnId(columns,cell):
     """
         helper function to map smartsheet column IDs to their name value without hardcoding
         pass in the parsed objects from smartsheet(the entire set of columns and the individual cell)
         then iterate until the ids match and return the associated column name
+        could also make processing simpler by creating a card to fill out with who and when.
     """
     
     #cell object has listing for column_id , but data shows {columnId: n}, weird
@@ -254,7 +309,16 @@ def get_msg_sent_to_bot(msg_id, headers):
     return response["text"]
 
 
-
+def pause_taco_bot(room_id,date=False,flag="room"):
+    '''
+        Take a room and a date and put pause on all the members (or maybe just the defalt_create member)
+        or if the flag is for an individual, just pause them.
+        If no date is given, just take the next meeting time, add by 1 interval, and minus a day/hour/etc
+        so that it will run the following meeting
+        Shouls probably take the taco_selector def and split it into multiple defs and reuse that code for
+        this def.
+    '''
+    pass
 
 
 def process_bot_input_command(room_id,command, headers, bot_name):

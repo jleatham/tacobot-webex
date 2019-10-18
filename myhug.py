@@ -27,7 +27,7 @@ def taco(body):
         command = command.lower()
         command = (command.replace(TACO_NAME, '')).strip()
         command = (command.replace('@', '')).strip()
-        #print("stripped command: {}".format(command))
+        print("stripped command: {}".format(command))
         process_bot_input_command(room_id,command, TACO_HEADERS, TACO_NAME)
         #send_log_to_ss(TACO_NAME,str(datetime.now()),identity,command,room_id)
 
