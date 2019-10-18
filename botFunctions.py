@@ -232,11 +232,18 @@ def weighted_random_select(ptp_list):
     weight = []
     tacos_given = []
     for i in ptp_list:
-        tacos_given.append(int(float(i[2])))
+        if not i[2]:
+            l = 0
+        else:
+            l = int(float(i[2]))        
+        tacos_given.append(l)
     limit = sorted(list(set(tacos_given)))[0]  #get unique numbers, sort them, only grab the first/lowest, these people need 
     #to be selected next
     for i in ptp_list:
-        l = int(float(i[2]))
+        if not i[2]:
+            l = 0
+        else:
+            l = int(float(i[2]))
         if l == limit:
             w = 1
             weight.append(w)
