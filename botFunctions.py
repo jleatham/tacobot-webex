@@ -255,7 +255,7 @@ def weighted_random_select(ptp_list):
         weights=weight,
         k=1
     )    
-    return c
+    return c[0]
 
 def map_cell_data_to_columnId(columns,cell):
     """
