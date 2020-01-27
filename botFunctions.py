@@ -117,7 +117,9 @@ def taco_selector():
     #get all Smart Sheet Data
        #dict of rows with the column as key    
     all_data_list = get_ss_data()
-    
+    print("--------------------all_data_list----------------------")
+    print(all_data_list)
+    print("---------------end--all_data_list----------------------")
     #unpause any member if current date is greater than 'pause' date (add to-modify list)
     #get all roomIDs while looping then remove duplicates
     for row in all_data_list:
@@ -167,7 +169,9 @@ def taco_selector():
     #if yes to above, randomly select member in room
         #post to room
         #add selected member to to_modify list
-    
+    print("--------------------member_pick_list----------------------")
+    print(all_data_list)
+    print("---------------end--member_pick_list----------------------")    
     for row in member_pick_list:
         print(f"{row}")
         if str(datetime.now().weekday()) == row["weekday_to_run"]: #0=Monday , 4=Friday, etc
