@@ -170,7 +170,7 @@ def taco_selector():
         #post to room
         #add selected member to to_modify list
     print("--------------------member_pick_list----------------------")
-    print(all_data_list)
+    print(member_pick_list)
     print("---------------end--member_pick_list----------------------")    
     for row in member_pick_list:
         print(f"{row}")
